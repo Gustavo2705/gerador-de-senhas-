@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Senhas • 12 caracteres</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b1120 0%, #1a2639 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 48px;
+      box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      padding: 2.5rem 2.2rem 2.8rem;
+      max-width: 560px;
+      width: 100%;
+      transition: 0.25s ease;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #f0f4ff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    h1 span {
+      background: #3b82f6;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.15rem 0.9rem;
+      border-radius: 40px;
+      color: #fff;
+      background: #2563eb;
+      box-shadow: 0 0 0 1px #3b82f680;
+    }
+
+    .sub {
+      color: #9bb0d9;
+      font-weight: 400;
+      font-size: 0.95rem;
+      letter-spacing: 0.2px;
+      margin-bottom: 2.2rem;
+      border-left: 3px solid #3b82f6;
+      padding-left: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .senha-container {
+      background: #0d1422;
+      border-radius: 80px;
+      padding: 0.3rem 0.3rem 0.3rem 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.6), 0 0 0 1px #2a3a5a;
+      transition: 0.15s;
+      margin-bottom: 2rem;
+    }
+
+    .senha-container:focus-within {
+      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.6), 0 0 0 2px #3b82f6;
+    }
+
+    #senhaOutput {
+      background: transparent;
+      border: none;
+      color: #f0f6ff;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      padding: 0.9rem 0;
+      width: 100%;
+      outline: none;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    #senhaOutput::placeholder {
+      color: #4a5f84;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+
+    .btn-copiar {
+      background: #1e2a44;
+      border: none;
+      border-radius: 60px;
+      color: #d6e3ff;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.7rem 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+      font-family: inherit;
+      border: 1px solid #31486e;
+    }
+
+    .btn-copiar:hover {
+      background: #2a3b62;
+      color: white;
+      border-color: #4f70a0;
+      transform: scale(1.02);
+    }
+
+    .btn-copiar:active {
+      transform: scale(0.94);
+      background: #1b2744;
+    }
+
+    .acoes {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-gerar {
+      background: linear-gradient(145deg, #2563eb, #1d4ed8);
+      border: none;
+      border-radius: 60px;
+      color: white;
+      font-size: 1.15rem;
+      font-weight: 600;
+      padding: 0.9rem 2.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 8px 18px -6px #1e3a8a;
+      border: 1px solid #3b82f6;
+      flex: 1;
+      min-width: 160px;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-gerar:hover {
+      background: linear-gradient(145deg, #3b82f6, #2563eb);
+      transform: scale(1.01);
+      box-shadow: 0 10px 22px -8px #1e3a8a;
+    }
+
+    .btn-gerar:active {
+      transform: scale(0.96);
+      background: #1d4ed8;
+    }
+
+    .config {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      background: #0f182b;
+      padding: 0.5rem 1.2rem 0.5rem 1.5rem;
+      border-radius: 60px;
+      border: 1px solid #26375a;
+    }
+
+    .config label {
+      color: #c2d4f0;
+      font-weight: 450;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .config input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: #3b82f6;
+      cursor: pointer;
+      filter: drop-shadow(0 0 2px #1e3a8a);
+    }
+
+    .toast {
+      background: #0f1a2e;
+      color: #b7cef0;
+      padding: 0.7rem 1.5rem;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      border-left: 4px solid #3b82f6;
+      margin-top: 1.2rem;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.2s ease;
+      transform: translateY(6px);
+      pointer-events: none;
+      display: inline-block;
+      border: 1px solid #2d4066;
+    }
+
+    .toast.visivel {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .footer {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 0.8rem;
+      color: #4d6a96;
+      letter-spacing: 0.3px;
+    }
+
+    .footer span {
+      background: #0b1424;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      border: 1px solid #23365a;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.8rem 1.2rem; }
+      h1 { font-size: 1.6rem; flex-wrap: wrap; }
+      .senha-container { padding-left: 1rem; flex-wrap: wrap; }
+      #senhaOutput { font-size: 1.2rem; }
+      .btn-copiar { padding: 0.5rem 1rem; }
+      .btn-gerar { padding: 0.8rem 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>
+      🔐 Gerador
+      <span>12</span>
+    </h1>
+    <div class="sub">senha forte • caracteres aleatórios</div>
+
+    <!-- campo da senha + botão copiar -->
+    <div class="senha-container">
+      <input type="text" id="senhaOutput" placeholder="Clique em gerar" readonly spellcheck="false">
+      <button class="btn-copiar" id="copiarBtn" title="Copiar senha">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        Copiar
+      </button>
+    </div>
+
+    <!-- ações: gerar + checkboxes -->
+    <div class="acoes">
+      <button class="btn-gerar" id="gerarBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        Gerar senha
+      </button>
+
+      <div class="config">
+        <label>
+          <input type="checkbox" id="incluirMaiusculas" checked> A-Z
+        </label>
+        <label>
+          <input type="checkbox" id="incluirNumeros" checked> 0-9
+        </label>
+        <label>
+          <input type="checkbox" id="incluirSimbolos" checked> #@!
+        </label>
+      </div>
+    </div>
+
+    <!-- toast de notificação -->
+    <div id="toast" class="toast">✔️ Senha copiada!</div>
+    <div class="footer"><span>⚡ 12 caracteres • sempre aleatório</span></div>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      // Elementos DOM
+      const senhaInput = document.getElementById('senhaOutput');
+      const gerarBtn = document.getElementById('gerarBtn');
+      const copiarBtn = document.getElementById('copiarBtn');
+      const toast = document.getElementById('toast');
+
+      // Checkboxes
+      const chkMaiusculas = document.getElementById('incluirMaiusculas');
+      const chkNumeros = document.getElementById('incluirNumeros');
+      const chkSimbolos = document.getElementById('incluirSimbolos');
+
+      // Conjuntos de caracteres
+      const LETRAS_MINUSCULAS = 'abcdefghijklmnopqrstuvwxyz';
+      const LETRAS_MAIUSCULAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const NUMEROS = '0123456789';
+      const SIMBOLOS = '!@#$%^&*()_+-=[]{}|;:,.<>?/';
+
+      // Tamanho fixo: 12 caracteres
+      const TAMANHO_SENHA = 12;
+
+      // Função que gera senha baseada nas opções ativas
+      function gerarSenha() {
+        // Monta o conjunto de caracteres permitidos
+        let caracteresPermitidos = LETRAS_MINUSCULAS; // minúsculas sempre inclusas
+
+        if (chkMaiusculas.checked) {
+          caracteresPermitidos += LETRAS_MAIUSCULAS;
+        }
+        if (chkNumeros.checked) {
+          caracteresPermitidos += NUMEROS;
+        }
+        if (chkSimbolos.checked) {
+          caracteresPermitidos += SIMBOLOS;
+        }
+
+        // Caso nenhuma opção esteja marcada (exceto minúsculas, que são padrão)
+        // mas minúsculas sempre existem, então caracteresPermitidos nunca fica vazio.
+        // Entretanto, se por algum motivo o usuário desmarcar todas (incluindo minúsculas?) 
+        // Não permitimos desmarcar minúsculas, mas se acontecer, garantimos fallback.
+        if (caracteresPermitidos.length === 0) {
+          // Fallback: apenas minúsculas
+          caracteresPermitidos = LETRAS_MINUSCULAS;
+          // Força o checkbox de minúsculas (mesmo que não exista, mas mantemos seguro)
+          // Na prática, minúsculas sempre estão disponíveis.
+        }
+
+        let senha = '';
+        const comprimento = TAMANHO_SENHA;
+        const randomValues = new Uint8Array(comprimento);
+        crypto.getRandomValues(randomValues);
+
+        for (let i = 0; i < comprimento; i++) {
+          const indice = randomValues[i] % caracteresPermitidos.length;
+          senha += caracteresPermitidos.charAt(indice);
+        }
+
+        return senha;
+      }
+
+      // Atualiza o campo com nova senha
+      function atualizarSenha() {
+        const novaSenha = gerarSenha();
+        senhaInput.value = novaSenha;
+        // Dispara evento 'input' para garantir que outros listeners (se houver) saibam
+        senhaInput.dispatchEvent(new Event('input', { bubbles: true }));
+        return novaSenha;
+      }
+
+      // --- Toast (notificação) ---
+      let timeoutId = null;
+
+      function mostrarToast(mensagem = '✔️ Senha copiada!') {
+        toast.textContent = mensagem;
+        toast.classList.add('visivel');
+
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+
+        timeoutId = setTimeout(() => {
+          toast.classList.remove('visivel');
+          timeoutId = null;
+        }, 2500);
+      }
+
+      // --- Copiar senha ---
+      function copiarSenha() {
+        const senha = senhaInput.value;
+        if (!senha || senha.length === 0) {
+          mostrarToast('⚠️ Nenhuma senha para copiar');
+          return;
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(senha)
+            .then(() => {
+              mostrarToast('✔️ Senha copiada!');
+            })
+            .catch(() => {
+              // fallback
+              copiarFallback(senha);
+            });
+        } else {
+          copiarFallback(senha);
+        }
+      }
+
+      // Fallback para copiar (textarea oculto)
+      function copiarFallback(texto) {
+        const textarea = document.createElement('textarea');
+        textarea.value = texto;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          const sucesso = document.execCommand('copy');
+          if (sucesso) {
+            mostrarToast('✔️ Senha copiada!');
+          } else {
+            mostrarToast('❌ Erro ao copiar');
+          }
+        } catch (err) {
+          mostrarToast('❌ Erro ao copiar');
+        }
+        document.body.removeChild(textarea);
+      }
+
+      // --- Event Listeners ---
+
+      // Gerar senha ao clicar no botão
+      gerarBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        atualizarSenha();
+        // feedback sutil no botão
+        this.style.transform = 'scale(0.96)';
+        setTimeout(() => { this.style.transform = ''; }, 120);
+      });
+
+      // Copiar ao clicar no botão copiar
+      copiarBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        copiarSenha();
+        // feedback
+        this.style.transform = 'scale(0.94)';
+        setTimeout(() => { this.style.transform = ''; }, 120);
+      });
+
+      // Geração automática ao marcar/desmarcar checkboxes (opcional, mas prático)
+      // Para não gerar senha a cada clique, melhor deixar explícito no botão.
+      // Porém, muitos usuários esperam que ao alterar as opções a senha seja atualizada.
+      // Vamos fazer isso: ao mudar checkbox, gerar nova senha.
+      function onCheckboxChange() {
+        // Garantir que minúsculas sempre estão disponíveis (não temos checkbox para desativar)
+        // Mas se todos os checkboxes estiverem desmarcados, ainda teremos minúsculas.
+        // Então geramos nova senha.
+        atualizarSenha();
+      }
+
+      chkMaiusculas.addEventListener('change', onCheckboxChange);
+      chkNumeros.addEventListener('change', onCheckboxChange);
+      chkSimbolos.addEventListener('change', onCheckboxChange);
+
+      // Gera uma senha inicial ao carregar a página
+      window.addEventListener('load', function() {
+        atualizarSenha();
+        // pequena animação de boas-vindas (opcional)
+        setTimeout(() => {
+          toast.textContent = '🔐 Clique em "Gerar" ou marque opções';
+          toast.classList.add('visivel');
+          setTimeout(() => {
+            toast.classList.remove('visivel');
+          }, 2000);
+        }, 300);
+      });
+
+      // Adicionar atalho com tecla Enter no campo (copiar)
+      senhaInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          copiarSenha();
+        }
+      });
+
+      // Garantir que o campo não seja editável (já é readonly)
+      // Mas ainda assim, usuários podem selecionar e copiar manualmente.
+      // Adicionar clique no campo para selecionar todo o texto (facilita cópia manual)
+      senhaInput.addEventListener('click', function() {
+        this.select();
+      });
+
+      // Pequena melhoria: ao gerar, selecionar o texto automaticamente
+      gerarBtn.addEventListener('click', function() {
+        setTimeout(() => {
+          senhaInput.select();
+        }, 50);
+      });
+
+      // Proteção: se todas as checkboxes estiverem desmarcadas (exceto minúsculas), ainda funciona
+      // Mas se o usuário desmarcar todas (incluindo minúsculas? não há checkbox para minúsculas)
+      // então sempre teremos minúsculas. Seguro.
+      console.log('✅ Gerador de senhas 12 caracteres carregado.');
+    })();
+  </script>
+</body>
+</html>
